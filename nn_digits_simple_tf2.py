@@ -8,6 +8,7 @@ https://keras.io/
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 import tensorflow as tf
+import os
 
 '''
 Create an mnist object
@@ -98,3 +99,14 @@ model.fit(train_imgs, train_labels, epochs=n_epochs, batch_size=mini_batch_size)
 Now that the neural network has been trained, test it with the testing dataset.
 '''
 model.evaluate(test_imgs, test_labels, verbose=2)
+
+'''
+Save the trained model so we can load it and use it later without having to
+retrain.
+'''
+export_path = "."
+export_dir = os.path.dirname(export_path)
+model_name = 'nn_digits_sgd.h5'
+model.save(export_dir+model_name)
+print( "Model saved to " + export_dir + model_name)
+model.summary()

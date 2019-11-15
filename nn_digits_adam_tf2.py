@@ -92,7 +92,7 @@ model.compile(optimizer='adam',
 Everything is set to go. We only have to feed training data into
 our neural network (model) and specify the number of training epochs
 '''
-n_epochs = 1
+n_epochs = 5
 mini_batch_size = 32
 model.fit(train_imgs, train_labels, epochs=n_epochs, batch_size=mini_batch_size)
 
