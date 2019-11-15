@@ -8,6 +8,7 @@ https://keras.io/
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 import tensorflow as tf
+import os
 
 '''
 Create an mnist object
@@ -49,6 +50,9 @@ inputs being fed in.
 
 For more on the concept of dropout, read
 https://medium.com/@amarbudhiraja/https-medium-com-amarbudhiraja-learning-less-to-learn-better-dropout-in-deep-machine-learning-74334da4bfc5
+
+Our dropout threshold is 0.2, meaning that after the first hidden layer, we create a second hidden layer
+where each node of the first is kept with a probability of 0.8 (1.0 - 0.2).
 '''
 model = tf.keras.models.Sequential([
   tf.keras.layers.Flatten(input_shape=(28, 28)),
@@ -88,7 +92,7 @@ model.compile(optimizer='adam',
 Everything is set to go. We only have to feed training data into
 our neural network (model) and specify the number of training epochs
 '''
-n_epochs = 5
+n_epochs = 1
 mini_batch_size = 32
 model.fit(train_imgs, train_labels, epochs=n_epochs, batch_size=mini_batch_size)
 
@@ -97,3 +101,14 @@ Now that the neural network has been trained, test it with
 the testing dataset.
 '''
 model.evaluate(test_imgs, test_labels, verbose=2)
+
+'''
+Save the trained model so we can load it and use it later without having to
+retrain.
+'''
+export_path = "."
+export_dir = os.path.dirname(export_path)
+model_name = 'nn_digits_adam.h5'
+model.save(export_dir+model_name)
+print( "Model saved to " + export_dir + model_name)
+model.summary()
