@@ -1,3 +1,4 @@
 MNIST_data
 *.swp
 *.h5
+handwritten_digit_calc.py
