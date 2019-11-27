@@ -1,5 +1,5 @@
 '''
-Test the TensorFlow 2.0 models created by the other scripts.
+Compare the TensorFlow 2.0 models created by the other scripts.
 '''
 
 from __future__ import absolute_import, division, print_function, unicode_literals
@@ -8,13 +8,16 @@ import matplotlib.pyplot as plt
 from PIL import Image
 import numpy as np
 import os
+# Since we are using keras as the main component to a TF backend
+import keras
 
 '''
 Load our previously saved models
 '''
 model_name = 'nn_digits_adam.h5'
-adam_model = tf.keras.models.load_model('nn_digits_adam.h5')
 sgd_model = tf.keras.models.load_model('nn_digits_sgd.h5')
+adam_model = tf.keras.models.load_model('nn_digits_adam.h5')
+cnn_model = keras.models.load_model('nn_digits_cnn.h5')
 
 '''
  Test the system on personal images, also of size 28 x 28, saved as PNG files.
@@ -40,6 +43,7 @@ for i in digits:
 new_test_imgs = np.asarray(new_test_imgs)/255.0
 new_test_labels = np.asarray(new_test_labels, dtype=int)
 new_hot_test_labels = tf.keras.utils.to_categorical(new_test_labels, 10)
+cnn_test_imgs = new_test_imgs.reshape(-1, 28, 28, 1)
 
 # Generate a dispaly of all the test images
 fig = plt.figure(figsize=(8, 3))
@@ -68,4 +72,14 @@ for i, logits in enumerate(predictions):
 
 loss, accuracy = adam_model.evaluate(new_test_imgs, new_test_labels, verbose=2)
 print('Restored adam model, accuracy: {:5.2f}%'.format(100 * accuracy) )
+
+print("CNN model predictions:")
+predictions = cnn_model.predict(cnn_test_imgs)
+for i, logits in enumerate(predictions):
+    predicted = tf.argmax(logits).numpy()
+    p = tf.nn.softmax(logits)[predicted]
+    print("Digit {},  prediction: {} ({:4.1f}%)".format(i, predicted, 100*p))
+
+loss, accuracy = cnn_model.evaluate(cnn_test_imgs, new_hot_test_labels, verbose=2)
+print('Restored CNN model, accuracy: {:5.2f}%'.format(100 * accuracy) )
 

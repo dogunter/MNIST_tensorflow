@@ -1,5 +1,6 @@
+import os
 import keras
-from keras.layers import Dense, Conv2D, MaxPool2D, Flatten, Activation
+from keras.layers import Dense, Conv2D, MaxPool2D, Flatten, Activation, Dropout
 
 '''
 Create an mnist object
@@ -62,7 +63,8 @@ layer.
    Layer 3: Flatten the data and connect it to the remaining fully-connected
             section of the neural network.
    Layer 4: Next hidden layer of 128 nodes using the relu activation function.
-   Layer 5: Our 10-node output layer with 'softmax' as the activation function
+   Layer 5: A drop-out layer
+   Layer 6: Our 10-node output layer with 'softmax' as the activation function
 '''
 model = keras.models.Sequential()
 # Layer 1
@@ -75,6 +77,8 @@ model.add(Flatten())
 # Layer 4
 model.add(Dense(128, activation='relu'))
 # Layer 5
+model.add(Dropout(0.2))
+# Layer 6
 model.add(Dense(10, activation='softmax'))
 
 '''
@@ -95,7 +99,7 @@ model.compile(optimizer='adam',
 '''
 Feed in the data for fitting (training) the model
 '''
-n_epochs = 2
+n_epochs = 5
 mini_batch_size = 32
 model.fit(train_imgs, train_labels_cat, epochs=n_epochs, batch_size=mini_batch_size, 
         verbose=1, validation_split=0.3)
@@ -105,3 +109,14 @@ Test out the model with the test set of data
 '''
 print("Evaluating the model.")
 model.evaluate(test_imgs, test_labels_cat, verbose=2)
+
+'''
+Save the trained model so we can load it and use it later without having to
+retrain.
+'''
+export_path = "."
+export_dir = os.path.dirname(export_path)
+model_name = 'nn_digits_cnn.h5'
+model.save(export_dir+model_name)
+print( "Model saved to " + export_dir + model_name)
+model.summary()
